@@ -33,6 +33,37 @@ def calculate_angle(a, b, c):
     return angle
 
 
+def moving_average(values, window_size=5):
+    """Apply light smoothing to reduce frame-level jitter."""
+    if not values:
+        return []
+    window_size = max(1, min(window_size, len(values)))
+    kernel = np.ones(window_size) / window_size
+    return np.convolve(values, kernel, mode="same").tolist()
+
+
+def count_reps_from_angle(angle_sequence):
+    """
+    Count squat reps using a simple state machine with hysteresis:
+    - go "down" when angle dips below DOWN_THRESHOLD
+    - count one rep when it returns above UP_THRESHOLD
+    """
+    DOWN_THRESHOLD = 115.0
+    UP_THRESHOLD = 155.0
+
+    stage = "up"
+    reps = 0
+
+    for angle in angle_sequence:
+        if stage == "up" and angle < DOWN_THRESHOLD:
+            stage = "down"
+        elif stage == "down" and angle > UP_THRESHOLD:
+            reps += 1
+            stage = "up"
+
+    return reps
+
+
 @app.post("/analyze-video")
 async def analyze_video(file: UploadFile = File(...)):
     # Save video temporarily
@@ -77,10 +108,15 @@ async def analyze_video(file: UploadFile = File(...)):
         if not left_knees:
             return {"error": "No pose detected in video"}
 
-        avg_left = np.mean(left_knees)
-        avg_right = np.mean(right_knees)
-        min_knee = min(min(left_knees), min(right_knees))
-        max_knee = max(max(left_knees), max(right_knees))
+        smoothed_left = moving_average(left_knees, window_size=5)
+        smoothed_right = moving_average(right_knees, window_size=5)
+        combined_knee = [(l + r) / 2 for l, r in zip(smoothed_left, smoothed_right)]
+
+        avg_left = np.mean(smoothed_left)
+        avg_right = np.mean(smoothed_right)
+        min_knee = min(min(smoothed_left), min(smoothed_right))
+        max_knee = max(max(smoothed_left), max(smoothed_right))
+        reps = count_reps_from_angle(combined_knee)
 
         # Feedback based on min knee angle (deepest squat)
         if min_knee > 140:
@@ -96,7 +132,7 @@ async def analyze_video(file: UploadFile = File(...)):
             "min_knee": round(min_knee, 1),
             "max_knee": round(max_knee, 1),
             "feedback": feedback,
-            "reps": len([x for x in left_knees if x < 120]) // 2,  # Approximate reps
+            "reps": reps,
             "symmetry": round(100 - abs(avg_left - avg_right) / avg_left * 100, 1),
         }
 

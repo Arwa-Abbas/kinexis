@@ -127,12 +127,12 @@ function App() {
             }}>
               <div style={card}>
                 <p style={label}>Left Knee</p>
-                <p style={value}>{feedback.avg_left_knee || '--'}°</p>
+                <p style={value}>{feedback.left_knee || '--'}°</p>
               </div>
 
               <div style={card}>
                 <p style={label}>Right Knee</p>
-                <p style={value}>{feedback.avg_right_knee || '--'}°</p>
+                <p style={value}>{feedback.right_knee || '--'}°</p>
               </div>
             </div>
 
