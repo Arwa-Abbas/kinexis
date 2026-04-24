@@ -1,0 +1,35 @@
+# Python virtual environment
+venv/
+dl-biomech/venv/
+backend/venv/
+
+# Python cache
+__pycache__/
+*.pyc
+
+# Node modules (frontend)
+node_modules/
+frontend/node_modules/
+
+# Build outputs
+dist/
+frontend/dist/
+
+# IDE files
+.vscode/
+.idea/
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Your project data files (large)
+*.mp4
+*.npy
+*.pt
+*.csv
+*.log
+
+
+# Environment variables
+.env
