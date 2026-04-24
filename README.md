@@ -7,7 +7,7 @@ Poor exercise form is a leading cause of injury and inefficient training. This p
 
 - **🦴 Pose Estimation**: MediaPipe BlazePose (33 keypoints, real-time)
 - **📐 Biomechanical Analysis**: Joint angles, symmetry scoring, rep counting
-- **🧠 Deep Learning**: ST-GCN for movement classification (optional)
+- **🧠 Deep Learning**: ST-GCN for movement classification 
 - **💬 Feedback System**: Visual overlays + voice cues for error correction
 
 ## 🏗️ System Architecture
