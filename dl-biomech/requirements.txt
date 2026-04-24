@@ -2,10 +2,11 @@
 mediapipe==0.10.14
 opencv-python==4.9.0.80
 
-# Deep learning
-torch==2.1.0
-torchvision==0.16.0
-torchaudio==2.1.0
+# Deep learning (optional for ai_service.py runtime)
+# Newer Python versions may not have wheels for old torch pins.
+torch>=2.2.0
+torchvision
+torchaudio
 
 # Data science
 numpy==1.26.4
