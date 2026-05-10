@@ -1,0 +1,51 @@
+{
+  "best_checkpoint": "/kaggle/working/kinexis/work_dir/best_model.pth",
+  "best_val_accuracy": 0.8493,
+  "num_classes": 7,
+  "clip_len": 150,
+  "num_joints": 13,
+  "in_channels_xy": 2,
+  "in_channels_conf": 1,
+  "phase1_epochs": 25,
+  "phase2_epochs": 80,
+  "phase1_lr": 0.001,
+  "phase2_lr": 5e-05,
+  "batch_size": 16,
+  "label_smoothing": 0.1,
+  "pretrained_checkpoint": "/kaggle/working/stgcnpp_ntu60_pretrained.pth",
+  "pretrained_url": "https://download.openmmlab.com/mmaction/pyskl/ckpt/stgcnpp/stgcnpp_ntu60_xsub_hrnet/j.pth",
+  "label_map": {
+    "0": "pull_ups",
+    "1": "push_ups",
+    "2": "bench_press",
+    "3": "jumping_jacks",
+    "4": "sit_ups",
+    "5": "jump_rope",
+    "6": "squats"
+  },
+  "per_class_accuracy": {
+    "pull_ups": 89.11,
+    "push_ups": 81.31,
+    "bench_press": 84.51,
+    "jumping_jacks": 91.07,
+    "sit_ups": 86.0,
+    "jump_rope": 90.48,
+    "squats": 79.49
+  },
+  "mediapipe_to_pennaction": {
+    "0": 0,
+    "11": 1,
+    "12": 2,
+    "13": 3,
+    "14": 4,
+    "15": 5,
+    "16": 6,
+    "23": 7,
+    "24": 8,
+    "25": 9,
+    "26": 10,
+    "27": 11,
+    "28": 12
+  },
+  "inference_note": "forward(xy, conf) where xy.shape=(N,2,T,13) and conf.shape=(N,1,T,13)"
+}

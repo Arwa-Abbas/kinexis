@@ -60,9 +60,12 @@ MIN_CONF_FOR_REPS    = 0.40  # 0.65
 MIN_ANKLE_VIS        = 0.15  # primary frame gate — ankles must be visible
 MIN_KNEE_VIS         = 0.20  # lowered from 0.50 — push-ups and squats have low knee vis
 
-MODEL_DIR       = os.path.join(os.path.dirname(__file__), 'models')
-CHECKPOINT_PATH = os.path.join(MODEL_DIR, 'best_model.pth')
-META_PATH       = os.path.join(MODEL_DIR, 'model_meta.json')
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+
+MODEL_DIR = os.path.join(BASE_DIR, "backend", "models")
+
+CHECKPOINT_PATH = os.path.join(MODEL_DIR, "best_model.pth")
+META_PATH       = os.path.join(MODEL_DIR, "model_meta.json")
 
 with open(META_PATH) as f:
     META = json.load(f)
