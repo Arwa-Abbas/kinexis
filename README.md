@@ -1,111 +1,126 @@
-# Kinexis GUI — Setup & Usage Guide
+# Kinexis — Real-Time Exercise Tracking
 
-A polished Tkinter popup that wraps your existing `inference.py` with a
-live dashboard: video source selector, options, and real-time metrics.
-
----
-
-## Final folder structure
-
-```
-kinexis/
-├── inference.py          ← your existing file (patch it per INTEGRATION_PATCH.py)
-├── requirements.txt
-├── models/
-│   ├── best_model.pth
-│   └── model_meta.json
-├── videos/               ← put test videos here
-├── outputs/
-├── tests/
-│   └── test_dryrun.py
-└── app/
-    └── ui_main.py        ← the GUI launcher
-```
+Kinexis is a desktop app that uses your webcam or a video file to track exercise reps, analyse your form, and give you live coaching feedback — all in a single window.
 
 ---
 
-## Install dependencies
+## Requirements
 
-Everything the GUI needs is already in your `requirements.txt`.
-Tkinter ships with Python; no extra install needed.
+- Python 3.8 or later
+- A webcam (optional — you can also use pre-recorded video files)
+
+---
+
+## Installation
+
+**1. Clone or download the project**, then open a terminal in the project folder.
+
+**2. Install dependencies:**
 
 ```bash
 pip install -r requirements.txt
 ```
 
-> On Ubuntu/Debian, if `tkinter` is missing:
+> **Ubuntu/Debian users:** If you see an error about `tkinter`, run:
 > ```bash
 > sudo apt install python3-tk
 > ```
 
 ---
 
-## Run the GUI
+## Starting the app
 
 ```bash
-# from the project root
 python app/ui_main.py
 ```
 
-The popup opens immediately — no model loading until you click **START**.
+The dashboard opens immediately. Nothing loads until you press **START** — so startup is instant.
 
 ---
 
-## GUI walkthrough
+## Using the dashboard
 
-### Input Source panel
-| Control | Purpose |
-|---------|---------|
-| **Webcam (realtime)** | Uses `cv2.VideoCapture(index)`. Set camera index (0, 1, …) in the spinner. |
-| **Video file** | Click **Browse…** to pick any `.mp4 / .avi / .mov / .mkv`. |
+### Step 1 — Choose your input source
 
-### Options panel
-| Field | Purpose |
-|-------|---------|
-| Ground truth | Lock a known exercise for accuracy tracking (or leave on *auto-detect*). |
-| Expected reps | Feed your known rep count for rep-accuracy reporting. |
-| Save output to | Optional path — annotated video written to disk. |
-| Max frames | Stop early after N frames (blank = run until end / Q pressed). |
+In the **Input Source** panel, pick one of two options:
 
-### Buttons
-- **▶ START SESSION** — validates inputs, spawns the inference thread, lights the green status dot.
-- **■ STOP** — sets the stop event; the inference loop exits cleanly after the current frame.
-
-### Live Metrics panel (updates every 100 ms)
-| Card | Description |
-|------|-------------|
-| EXERCISE | Detected exercise label |
-| CONFIDENCE | Model confidence 0–100 % (green ≥65 %, amber ≥45 %, red <45 %) |
-| REPS | Current rep count |
-| FORM SCORE | Deviation from ideal angle ranges (green ≥75 %, amber ≥50 %, red <50 %) |
-| REP STATE | INIT / DOWN / UP — which phase of the rep cycle |
-| FRAMES | Total frames processed |
-
-### Form Feedback panel
-Up to 3 live coaching messages with severity colour:
-- 🟢 good — correct technique
-- 🟡 warning — minor deviation
-- 🔴 error — significant form issue
-
-### Joint Angles & Deviations panel (right column)
-Every angle computed by `get_angles()` is listed:
-- **Degrees** for elbow / knee / hip / shoulder
-- **Ratio** (dimensionless) for wrist-hip offset, wrist-chest distance, wrist-above-shoulder
-
-The orange/red bar shows how far each angle deviates from the ideal range
-for the current exercise (defined in `IDEAL_ANGLES` in inference.py).
+- **Webcam (realtime)** — streams directly from your camera. Use the number spinner to select your camera (0 is usually the built-in webcam; try 1 or 2 for external cameras).
+- **Video file** — click **Browse…** to load a `.mp4`, `.avi`, `.mov`, or `.mkv` file.
 
 ---
 
-## Next steps (optional)
+### Step 2 — Configure options (all optional)
 
-- **Headless mode** — skip `cv2.imshow` when `gui_state` is not None so
-  the OpenCV window doesn't appear alongside the Tkinter window.
-- **Session history** — log each session's metrics to a JSON file and
-  add a "History" tab that plots reps and form score over time.
-- **Rep timeline chart** — embed a small `matplotlib` figure (or use
-  `canvas` drawing) to show reps-per-minute as a sparkline.
-- **Audio cues** — use `winsound` / `playsound` to beep on each rep or
-  when form drops below 50 %.
-- **Packaging** — `pyinstaller --onefile app/ui_main.py` bundles
-  everything into a single executable.
+| Setting | What it does |
+|---------|-------------|
+| Ground truth | Lock the app to a specific exercise for more accurate tracking. Leave on *auto-detect* if you're not sure. |
+| Expected reps | Enter your target rep count to get a rep-accuracy score at the end. |
+| Save output to | Choose a file path to save an annotated video of your session. |
+| Max frames | Set a frame limit to stop the session early (leave blank to run until the video ends or you press STOP). |
+
+---
+
+### Step 3 — Start your session
+
+Click **▶ START SESSION**. The status dot turns green and the live metrics update in real time.
+
+Click **■ STOP** at any time to end the session cleanly.
+
+---
+
+## Reading the metrics
+
+### Live Metrics
+
+| Card | What it shows |
+|------|--------------|
+| **EXERCISE** | The exercise Kinexis has detected |
+| **CONFIDENCE** | How certain the model is — green ≥ 65 %, amber ≥ 45 %, red < 45 % |
+| **REPS** | Your current rep count |
+| **FORM SCORE** | How closely your movement matches ideal form — green ≥ 75 %, amber ≥ 50 %, red < 50 % |
+| **REP STATE** | Which phase of the rep you're in: INIT → DOWN → UP |
+| **FRAMES** | Total frames analysed so far |
+
+### Form Feedback
+
+Up to three coaching messages appear here as you move:
+
+- 🟢 **Good** — your technique is correct
+- 🟡 **Warning** — a minor deviation detected
+- 🔴 **Error** — a significant form issue that should be corrected
+
+### Joint Angles & Deviations
+
+The right-hand column shows every joint angle being measured (elbows, knees, hips, shoulders, wrist position). An orange or red bar appears next to any angle that falls outside the ideal range for your current exercise.
+
+---
+
+## Folder layout
+
+```
+kinexis/
+├── app/
+│   └── ui_main.py      ← the app you launch
+├── inference.py
+├── models/
+│   ├── best_model.pth
+│   └── model_meta.json
+├── videos/             ← place your test videos here
+└── outputs/            ← saved session videos appear here
+```
+
+---
+
+## Troubleshooting
+
+**The app opens but no video appears**
+Check that the correct camera index is selected, or that your video file path is valid.
+
+**Confidence stays red the whole session**
+Make sure the camera can see your full body. Step back so your head, torso, and legs are all visible.
+
+**The app crashes on startup**
+Run `pip install -r requirements.txt` again to make sure all dependencies are installed.
+
+**Webcam not detected**
+Try changing the camera index from 0 to 1 (or 2) in the spinner.
